@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Afterschool Activities</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Afterschool Activities</h1>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle" @change="toggleTheme" />
+      <span class="slider round"></span>
+    </label>
+    <div class="button" @click="toggleCartPage">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge" v-if="cartItemCount">{{ cartItemCount }}</span>
+    </div>
+  </header>
+
+  <div v-if="!isCartPage" style="margin-bottom: 15px;">
+    <div class="lessons-page">
+      <input type="text" id="search" v-model="searchQuery" placeholder="Search Lessons..." />
+      <select v-model="sortKey" style="margin-left: 4px;">
+        <option disabled value="">Sort By</option>
+        <option value="title">Subject</option>
+        <option value="location">Location</option>
+        <option value="price">Price</option>
+        <option value="spaces">Availability</option>
+        <option value="rating">Rating</option>
+      </select>
+      <select v-model="sortOrder">
+        <option disabled value="">Order By</option>
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+    </div>
+
+    <div v-if="filteredLessons.length === 0" class="no-lessons-message">
+      No lessons found.
+    </div>
+
+    <div v-if="filteredLessons.length" id="lessonList" class="lesson-container">
+      <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson">
+        <h2>{{ lesson.title }}</h2>
+        <img :src="lesson.image" :alt="lesson.title" class="lesson-image" />
+        <div class="rating" v-html="getStars(lesson.rating)"></div>
+        <p>Location:  {{ lesson.location }}</p>
+        <p>Price:  ${{ lesson.price }}</p>
+        <p>Availability:  {{ lesson.spaces }}</p>
+        <button @click="addToCart(lesson)" :disabled="lesson.spaces === 0">Add To Cart</button>
+      </div>
+    </div>
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="modal-content">
+        <h2>Order Successful!</h2>
+        <p>Thank you for your purchase.</p>
+        <button @click="closeModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="isCartPage" id="cart-page" class="cart-page">
+    <h2>Shopping Cart</h2>
+    <div v-if="cart.length" class="cart-content">
+      <div v-for="item in cart" :key="item.cartId" class="cart-lesson">
+        <div class="lesson-title">{{ item.title }} - ${{ item.price }} </div>
+        <button @click="removeFromCart(item)">Remove</button>
+      </div>
+      <div class="cart-total">Total: ${{ cartTotal }}</div>
+      <h3>Checkout</h3>
+      <form id="checkout-form" @submit.prevent="submitOrder">
+        <div class="form-row">
+          <input type="text" id="name" v-model="name" placeholder="Name">
+          <input type="phone" id="phone" v-model="phone" placeholder="Phone Number">
+        </div>
+        <button class="checkout-btn" type="submit" :disabled="!canCheckout">Order</button>
+      </form>
+    </div>
+    <div v-else>
+      <p>Your cart is empty.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <h4>ⓒ</h4>
+    <p> Created By Saanviya Sunil</p>
+  </div>
+</div>
+<script src="js/main.js"></script>
+</body>
+</html>
