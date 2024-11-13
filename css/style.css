@@ -413,6 +413,11 @@ body.dark-theme .footer {
     font-weight: bold;
 }
 
+.cart-empty {
+    padding-top: 14%;
+    padding-bottom: 23%;
+}
+
 .cart-page h3 {
     text-align: center;
     margin-top: 3%;
