@@ -365,6 +365,16 @@ body.dark-theme .footer {
     color: white;
 }
 
+body.dark-theme .cart-button {
+    background-color: #080728;
+    padding: 8px;
+    border: 2px solid white;
+}
+
+body.dark-theme .cart-button:hover {
+    color: #080728;
+    background-color: white;
+}
 .cart-page {
     background-color: white; 
     color: #587b9dc7;
@@ -414,8 +424,8 @@ body.dark-theme .footer {
 }
 
 .cart-empty {
-    padding-top: 14%;
-    padding-bottom: 23%;
+    padding-top: 12%;
+    padding-bottom: 3%;
 }
 
 .cart-page h3 {
@@ -438,6 +448,30 @@ body.dark-theme .footer {
     cursor: pointer;
     color: #6d0404;
     background-color: white;
+}
+
+.cart-button {
+    background: #587b9dc7;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 150px;
+    height: 25%;
+    margin: 5px auto;
+    margin-bottom: 10px;
+    margin-top: 94px;
+    border-radius: 5px;
+    display: block;
+}
+
+.cart-button:hover {
+    background-color: white;
+    border: 2px solid #587b9dc7;
+    padding: 8px;
+    color: #587b9dc7;
+    cursor: pointer;
 }
 
 #checkout-form {
@@ -584,6 +618,7 @@ form button[type="submit"]:disabled {
     bottom: 0;
 	color: #587b9dc7;
     padding: 15px 0;
+    padding-bottom: 5px;
 	background-color: white;
     display: flex;
     justify-content: center; 
@@ -594,11 +629,11 @@ form button[type="submit"]:disabled {
 .footer h4 {
     margin: 0;
     margin-right: 5px;
-    padding-bottom: 20px;
+    padding-bottom: 5px;
 }
 
 .footer p {
     margin: 0;
     font-size: 0.9rem;
-    padding-bottom: 20px;
+    padding-bottom: 5px;
 }
