@@ -594,12 +594,11 @@ form button[type="submit"]:disabled {
 .footer h4 {
     margin: 0;
     margin-right: 5px;
-    padding-bottom: 1px;
-
+    padding-bottom: 20px;
 }
 
 .footer p {
     margin: 0;
     font-size: 0.9rem;
-    padding-bottom: 1px;
+    padding-bottom: 20px;
 }

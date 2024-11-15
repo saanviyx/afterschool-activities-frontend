@@ -21,6 +21,7 @@ let app = new Vue({
     canCheckout() {
       return this.validateName() && this.validatePhone() && this.cart.length > 0;
     },
+    // This computed property filters and sorts the lessons
     filteredLessons() {
       const primitiveSearch = (query, text) => {
         query = query.toLowerCase();
@@ -46,6 +47,7 @@ let app = new Vue({
         }
       }
 
+      // Sort the filtered lessons based on the selected sort key and order
       if (this.sortKey && this.sortOrder) {
         for (let i = 0; i < filtered.length; i++) {
           for (let j = i + 1; j < filtered.length; j++) {
@@ -67,6 +69,7 @@ let app = new Vue({
     },
   },
   methods: {
+    // Fetch lessons from the server
     async loadLessons() {
       try {
         const response = await fetch("/data");
