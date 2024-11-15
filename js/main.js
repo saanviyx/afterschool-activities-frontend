@@ -41,6 +41,13 @@ let app = new Vue({
     },
   },
   methods: {
+    searchLessons() {
+      if (this.searchQuery.trim()) {
+        this.fetchSearchResults(this.searchQuery);
+      } else {
+        this.loadLessons();
+      }
+    },
     async loadLessons() {
       try {
         const response = await fetch("/data");
@@ -52,10 +59,6 @@ let app = new Vue({
       }
     },
     async fetchSearchResults(query) {
-      if (query.trim() === "") {
-        this.loadLessons();
-        return;
-      }
       try {
         const response = await fetch(`/search?query=${query}`);
         if (!response.ok) {
@@ -66,6 +69,37 @@ let app = new Vue({
         console.error('Error fetching search results:', error);
       }
     },    
+    async submitOrder() {
+      const lessonIds = this.cart.map(item => item.id);
+      const orderData = {
+        name: this.name,
+        phone: this.phone,
+        lessonIds: lessonIds,
+      };
+  
+      try {
+        const response = await fetch('/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Order submission failed');
+        }
+  
+        this.showModal = true;
+        this.cart = [];
+        this.name = '';
+        this.phone = '';
+        this.isCartPage = false;
+        this.loadLessons();
+      } catch (error) {
+        console.error('Error submitting order:', error);
+      }
+    },
     addToCart(lesson) {
       this.cart.push({ ...lesson, cartId: Date.now() });
       lesson.spaces--;
@@ -87,13 +121,6 @@ let app = new Vue({
     validatePhone() {
       const phonePattern = /^[0-9]{10}$/;
       return phonePattern.test(this.phone);
-    },
-    submitOrder() {
-      this.showModal = true;
-      this.cart = [];
-      this.name = "";
-      this.phone = "";
-      this.isCartPage = !this.isCartPage;
     },
     closeModal() {
       this.showModal = false;
@@ -122,6 +149,5 @@ let app = new Vue({
   },
   mounted() {
     this.loadLessons();
-    this.fetchSearchResults(this.searchQuery);
   },
 });
