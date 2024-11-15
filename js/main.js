@@ -50,7 +50,12 @@ let app = new Vue({
     },
     async loadLessons() {
       try {
-        const response = await fetch("/data");
+        const response = await fetch("/data", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         const data = await response.json();
         console.log(data);
         this.lessons = data;
@@ -60,7 +65,13 @@ let app = new Vue({
     },
     async fetchSearchResults(query) {
       try {
-        const response = await fetch(`/search?query=${query}`);
+        const response = await fetch(`/search?query=${query}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -89,6 +100,10 @@ let app = new Vue({
         if (!response.ok) {
           throw new Error('Order submission failed');
         }
+
+        for (let lesson of this.cart) {
+          await this.updateLessonSpaces(lesson.id, { spaces: lesson.spaces - 1 });
+        }
   
         this.showModal = true;
         this.cart = [];
@@ -98,6 +113,25 @@ let app = new Vue({
         this.loadLessons();
       } catch (error) {
         console.error('Error submitting order:', error);
+      }
+    },
+    async updateLessonSpaces(lessonId, updateFields) {
+      try {
+        const response = await fetch(`/update/${lessonId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ lessonId, updateFields }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to update lesson ID ${lessonId}`);
+        }
+
+        console.log(`Lesson ID ${lessonId} updated successfully.`);
+      } catch (error) {
+        console.error('Error updating lesson spaces:', error);
       }
     },
     addToCart(lesson) {
