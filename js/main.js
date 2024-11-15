@@ -11,7 +11,25 @@ let app = new Vue({
     searchQuery: "",
     showModal: false,
   },
+  watch: {
+    searchQuery(newQuery) {
+      this.fetchSearchResults(newQuery);
+    }
+  },
   computed: {
+    filteredLessons() {
+      let lessons = this.lessons;
+      if (this.sortKey) {
+        lessons = lessons.sort((a, b) => {
+          if (this.sortOrder === 'asc') {
+            return a[this.sortKey] > b[this.sortKey] ? 1 : -1;
+          } else if (this.sortOrder === 'desc') {
+            return a[this.sortKey] < b[this.sortKey] ? 1 : -1;
+          }
+        });
+      }
+      return lessons;
+    },
     cartTotal() {
       return this.cart.reduce((total, item) => total + item.price, 0);
     },
@@ -21,63 +39,33 @@ let app = new Vue({
     canCheckout() {
       return this.validateName() && this.validatePhone() && this.cart.length > 0;
     },
-    // This computed property filters and sorts the lessons
-    filteredLessons() {
-      const primitiveSearch = (query, text) => {
-        query = query.toLowerCase();
-        text = text.toLowerCase();
-        for (let i = 0; i <= text.length - query.length; i++) {
-          if (text.substring(i, i + query.length) === query) {
-            return true;
-          }
-        }
-        return false;
-      };
-
-      const filtered = [];
-      for (let i = 0; i < this.lessons.length; i++) {
-        const lesson = this.lessons[i];
-        if (
-          primitiveSearch(this.searchQuery, lesson.title) ||
-          primitiveSearch(this.searchQuery, lesson.location) ||
-          primitiveSearch(this.searchQuery, lesson.price.toString()) ||
-          primitiveSearch(this.searchQuery, lesson.spaces.toString())
-        ) {
-          filtered.push(lesson);
-        }
-      }
-
-      // Sort the filtered lessons based on the selected sort key and order
-      if (this.sortKey && this.sortOrder) {
-        for (let i = 0; i < filtered.length; i++) {
-          for (let j = i + 1; j < filtered.length; j++) {
-            let swap = false;
-            if (this.sortOrder === 'asc' && filtered[i][this.sortKey] > filtered[j][this.sortKey]) {
-              swap = true;
-            } else if (this.sortOrder === 'desc' && filtered[i][this.sortKey] < filtered[j][this.sortKey]) {
-              swap = true;
-            }
-            if (swap) {
-              const temp = filtered[i];
-              filtered[i] = filtered[j];
-              filtered[j] = temp;
-            }
-          }
-        }
-      }
-      return filtered;
-    },
   },
   methods: {
-    // Fetch lessons from the server
     async loadLessons() {
       try {
         const response = await fetch("/data");
-        this.lessons = await response.json();
+        const data = await response.json();
+        console.log(data);
+        this.lessons = data;
       } catch (error) {
         console.error("Error loading lessons:", error);
       }
     },
+    async fetchSearchResults(query) {
+      if (query.trim() === "") {
+        this.loadLessons();
+        return;
+      }
+      try {
+        const response = await fetch(`/search?query=${query}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        this.lessons = await response.json();
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    },    
     addToCart(lesson) {
       this.cart.push({ ...lesson, cartId: Date.now() });
       lesson.spaces--;
@@ -134,5 +122,6 @@ let app = new Vue({
   },
   mounted() {
     this.loadLessons();
+    this.fetchSearchResults(this.searchQuery);
   },
 });
