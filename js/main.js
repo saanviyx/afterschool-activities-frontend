@@ -101,13 +101,33 @@ let app = new Vue({
       }
     },
     addToCart(lesson) {
-      this.cart.push({ ...lesson, cartId: Date.now() });
-      lesson.spaces--;
+      let existingItem = false;
+      for (let i = 0; i < this.cart.length; i++) {
+        if (this.cart[i].title === lesson.title) {
+          existingItem = true;
+          break;
+        }
+      }
+      if (!existingItem) {
+        this.cart.push({ ...lesson });
+        lesson.spaces--;
+      }
     },
     removeFromCart(item) {
-      this.cart = this.cart.filter(cartItem => cartItem.cartId !== item.cartId);
-      const originalLesson = this.lessons.find(lesson => lesson.id === item.id);
-      if (originalLesson) originalLesson.spaces++;
+      let updatedCart = [];
+      for (let i = 0; i < this.cart.length; i++) {
+        if (this.cart[i].title !== item.title) {
+          updatedCart.push(this.cart[i]);
+        }
+      }
+      this.cart = updatedCart;
+
+      for (let i = 0; i < this.lessons.length; i++) {
+        if (this.lessons[i].title === item.title) {
+          this.lessons[i].spaces++;
+          break;
+        }
+      }
     },
     toggleCartPage() {
       if (this.cart.length > 0 || this.isCartPage) {
