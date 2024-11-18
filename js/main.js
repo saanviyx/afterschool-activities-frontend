@@ -81,11 +81,19 @@ let app = new Vue({
       }
     },    
     async submitOrder() {
-      const lessonIds = this.cart.map(item => item.id);
+      const lessonMap = this.cart.reduce((map, item) => {
+        if (!map[item.id]) {
+          map[item.id] = { lessonId: item.id, quantity: 0 };
+        }
+        map[item.id].quantity += 1;
+        return map;
+      }, {});
+  
+      const lessons = Object.values(lessonMap);
       const orderData = {
         name: this.name,
         phone: this.phone,
-        lessonIds: lessonIds,
+        lessons,
       };
   
       try {
@@ -101,8 +109,13 @@ let app = new Vue({
           throw new Error('Order submission failed');
         }
 
-        for (let lesson of this.cart) {
-          await this.updateLessonSpaces(lesson.id, { spaces: lesson.spaces - 1 });
+        for (let lesson of lessons) {
+          const lessonInCart = this.cart.find((item) => item.id === lesson.lessonId);
+          if (lessonInCart) {
+              await this.updateLessonSpaces(lesson.lessonId, {
+                  spaces: lessonInCart.spaces - lesson.quantity,
+              });
+          }
         }
   
         this.showModal = true;
@@ -114,6 +127,29 @@ let app = new Vue({
       } catch (error) {
         console.error('Error submitting order:', error);
       }
+    },  
+    async addToCart(lesson) {
+      if (lesson.spaces > 0) {
+        this.cart.push({ ...lesson });
+        lesson.spaces--;
+  
+        await this.updateLessonSpaces(lesson.id, { spaces: lesson.spaces });
+      } else {
+        alert('No spaces available for this lesson!');
+      }
+    },
+    async removeFromCart(item) {
+      const updatedCart = this.cart.filter((cartItem) => cartItem.id !== item.id);
+      this.cart = updatedCart;
+  
+      for (let i = 0; i < this.lessons.length; i++) {
+        if (this.lessons[i].id === item.id) {
+          this.lessons[i].spaces++;
+          
+          await this.updateLessonSpaces(this.lessons[i].id, { spaces: this.lessons[i].spaces });
+          break;
+        }
+      }
     },
     async updateLessonSpaces(lessonId, updateFields) {
       try {
@@ -122,45 +158,16 @@ let app = new Vue({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ lessonId, updateFields }),
+          body: JSON.stringify({ updateFields }),
         });
-
+  
         if (!response.ok) {
           throw new Error(`Failed to update lesson ID ${lessonId}`);
         }
-
+  
         console.log(`Lesson ID ${lessonId} updated successfully.`);
       } catch (error) {
         console.error('Error updating lesson spaces:', error);
-      }
-    },
-    addToCart(lesson) {
-      let existingItem = false;
-      for (let i = 0; i < this.cart.length; i++) {
-        if (this.cart[i].title === lesson.title) {
-          existingItem = true;
-          break;
-        }
-      }
-      if (!existingItem) {
-        this.cart.push({ ...lesson });
-        lesson.spaces--;
-      }
-    },
-    removeFromCart(item) {
-      let updatedCart = [];
-      for (let i = 0; i < this.cart.length; i++) {
-        if (this.cart[i].title !== item.title) {
-          updatedCart.push(this.cart[i]);
-        }
-      }
-      this.cart = updatedCart;
-
-      for (let i = 0; i < this.lessons.length; i++) {
-        if (this.lessons[i].title === item.title) {
-          this.lessons[i].spaces++;
-          break;
-        }
       }
     },
     toggleCartPage() {
