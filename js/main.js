@@ -50,7 +50,7 @@ let app = new Vue({
     },
     async loadLessons() {
       try {
-        const response = await fetch("/data", {
+        const response = await fetch("https://afterschool-activities-backend.onrender.com/data", {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ let app = new Vue({
     },
     async fetchSearchResults(query) {
       try {
-        const response = await fetch(`/search?query=${query}`, {
+        const response = await fetch(`https://afterschool-activities-backend.onrender.com/search?query=${query}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ let app = new Vue({
       };
   
       try {
-        const response = await fetch('/order', {
+        const response = await fetch('https://afterschool-activities-backend.onrender.com/order', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ let app = new Vue({
     },
     async updateLessonSpaces(lessonId, updateFields) {
       try {
-        const response = await fetch(`/update/${lessonId}`, {
+        const response = await fetch(`https://afterschool-activities-backend.onrender.com/update/${lessonId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
