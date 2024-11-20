@@ -37,7 +37,7 @@ let app = new Vue({
   },
   methods: {
     searchLessons() {
-      if (!this.searchQuery.trim()) {
+      if (this.searchQuery === "") {
         this.loadLessons();
       } else {
         this.fetchSearchResults(this.searchQuery);
