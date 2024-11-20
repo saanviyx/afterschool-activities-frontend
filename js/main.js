@@ -37,7 +37,9 @@ let app = new Vue({
   },
   methods: {
     searchLessons() {
-      if (this.searchQuery.trim()) {
+      if (!this.searchQuery.trim()) {
+        this.loadLessons();
+      } else {
         this.fetchSearchResults(this.searchQuery);
       }
     },
@@ -50,8 +52,15 @@ let app = new Vue({
           }
         });
         const data = await response.json();
-        console.log(data);
-        this.lessons = data;
+        this.lessons = data.map((lesson) => {
+          let adjustedLesson = { ...lesson };
+          for (let i = 0; i < this.cart.length; i++) {
+            if (this.cart[i].id === adjustedLesson.id) {
+              adjustedLesson.spaces -= 1;
+            }
+          }
+          return adjustedLesson;
+        });
       } catch (error) {
         console.error("Error loading lessons:", error);
       }
@@ -68,7 +77,24 @@ let app = new Vue({
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        this.lessons = await response.json();
+        const backendLessons = await response.json();
+        const adjustedLessons = [];
+        for (let i = 0; i < backendLessons.length; i++) {
+          const lesson = backendLessons[i];
+          let cartCount = 0;
+          
+          for (let j = 0; j < this.cart.length; j++) {
+            if (this.cart[j].id === lesson.id) {
+              cartCount++;
+            }
+          }
+          
+          adjustedLessons.push({
+            ...lesson,
+            spaces: lesson.spaces - cartCount,
+          });
+        }
+        this.lessons = adjustedLessons;
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
@@ -105,9 +131,9 @@ let app = new Vue({
         for (let lesson of lessons) {
           const lessonInCart = this.cart.find((item) => item.id === lesson.lessonId);
           if (lessonInCart) {
-              await this.updateLessonSpaces(lesson.lessonId, {
-                  spaces: lessonInCart.spaces - lesson.quantity,
-              });
+            await this.updateLessonSpaces(lesson.lessonId, {
+              spaces: lessonInCart.spaces - lesson.quantity,
+            });
           }
         }
   
@@ -125,10 +151,6 @@ let app = new Vue({
       if (lesson.spaces > 0) {
         this.cart.push({ ...lesson });
         lesson.spaces--;
-  
-        await this.updateLessonSpaces(lesson.id, { spaces: lesson.spaces });
-      } else {
-        alert('No spaces available for this lesson!');
       }
     },
     async removeFromCart(item) {
@@ -147,7 +169,6 @@ let app = new Vue({
       for (let i = 0; i < this.lessons.length; i++) {
         if (this.lessons[i].id === item.id) {
           this.lessons[i].spaces++;
-          await this.updateLessonSpaces(this.lessons[i].id, { spaces: this.lessons[i].spaces });
           break;
         }
       }
