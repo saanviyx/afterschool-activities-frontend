@@ -39,8 +39,6 @@ let app = new Vue({
     searchLessons() {
       if (this.searchQuery.trim()) {
         this.fetchSearchResults(this.searchQuery);
-      } else {
-        this.loadLessons();
       }
     },
     async loadLessons() {
@@ -134,18 +132,26 @@ let app = new Vue({
       }
     },
     async removeFromCart(item) {
-      const updatedCart = this.cart.filter((cartItem) => cartItem.id !== item.id);
+      let found = false;
+      const updatedCart = [];
+      
+      for (let i = 0; i < this.cart.length; i++) {
+        if (!found && this.cart[i].id === item.id) {
+          found = true;
+        } else {
+          updatedCart.push(this.cart[i]);
+        }
+      }
       this.cart = updatedCart;
-  
+    
       for (let i = 0; i < this.lessons.length; i++) {
         if (this.lessons[i].id === item.id) {
           this.lessons[i].spaces++;
-          
           await this.updateLessonSpaces(this.lessons[i].id, { spaces: this.lessons[i].spaces });
           break;
         }
       }
-    },
+    },    
     async updateLessonSpaces(lessonId, updateFields) {
       try {
         const response = await fetch(`https://afterschool-activities-backend.onrender.com/update/${lessonId}`, {
