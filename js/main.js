@@ -142,7 +142,6 @@ let app = new Vue({
         this.name = '';
         this.phone = '';
         this.isCartPage = false;
-        this.loadLessons();
       } catch (error) {
         console.error('Error submitting order:', error);
       }
