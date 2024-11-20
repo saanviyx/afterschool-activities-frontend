@@ -11,11 +11,6 @@ let app = new Vue({
     searchQuery: "",
     showModal: false,
   },
-  watch: {
-    searchQuery(newQuery) {
-      this.fetchSearchResults(newQuery);
-    }
-  },
   computed: {
     filteredLessons() {
       let lessons = this.lessons;
