@@ -50,7 +50,7 @@
     <div v-if="filteredLessons.length" id="lessonList" class="lesson-container">
       <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson">
         <h2>{{ lesson.title }}</h2>
-        <img :src="`https://afterschool-activities-backend.onrender.com/images${lesson.image}`" class="lesson-image" />
+        <img :src="`https://afterschool-activities-backend.onrender.com/images/ + lesson.image`" class="lesson-image" />
         <div class="rating" v-html="getStars(lesson.rating)"></div>
         <p>Location:  {{ lesson.location }}</p>
         <p>Price:  ${{ lesson.price }}</p>
