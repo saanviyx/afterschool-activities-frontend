@@ -381,6 +381,7 @@ body.dark-theme .cart-button:hover {
     color: #080728;
     background-color: white;
 }
+
 .cart-page {
     background-color: white; 
     color: #587b9dc7;
@@ -415,8 +416,16 @@ body.dark-theme .cart-button:hover {
     background-color: #587b9dc7;
     color: white;
     border-radius: 5px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 10px;
+    gap: 10px;
+}
+
+.cart-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 10px;
 }
 
 .lesson-title {
