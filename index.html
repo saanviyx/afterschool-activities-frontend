@@ -71,7 +71,7 @@
     <h2>Shopping Cart</h2>
     <div v-if="cart.length" class="cart-content">
       <div v-for="item in cart" :key="item.cartId" class="cart-lesson">
-        <img class="cart-image" src="'https://afterschool-activities-backend.onrender.com/images/' + item.image"/>
+        <img :src="'https://afterschool-activities-backend.onrender.com/images/' + item.image" class="cart-image" />
         <div class="lesson-title">{{ item.title }} - ${{ item.price }} </div>
         <button @click="removeFromCart(item)">Remove</button>
       </div>
