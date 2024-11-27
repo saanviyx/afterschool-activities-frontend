@@ -420,7 +420,7 @@ body.dark-theme .cart-button:hover {
     gap: 10px;
 }
   
-.cart-page img {
+.cart-image {
     width: 100%;   
     height: 100%;
     max-height: 80px;       
