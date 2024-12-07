@@ -443,7 +443,7 @@ body.dark-theme .cart-button:hover {
 
 .cart-empty {
     padding-top: 12%;
-    padding-bottom: 3%;
+    padding-bottom: 4%;
 }
 
 .cart-page h3 {
@@ -636,7 +636,7 @@ form button[type="submit"]:disabled {
     bottom: 0;
 	color: #587b9dc7;
     padding: 15px 0;
-    padding-bottom: 10px;
+    padding-bottom: 25px;
 	background-color: white;
     display: flex;
     justify-content: center; 
