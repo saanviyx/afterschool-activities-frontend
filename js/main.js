@@ -131,7 +131,7 @@ let app = new Vue({
         for (let lesson of lessons) {
           const lessonInCart = this.cart.find((item) => item.id === lesson.lessonId);
           if (lessonInCart) {
-            await this.updateLessonSpaces(lesson.lessonId, {
+            await this.updateLesson(lesson.lessonId, {
               spaces: lessonInCart.spaces - lesson.quantity,
             });
           }
@@ -172,7 +172,7 @@ let app = new Vue({
         }
       }
     },    
-    async updateLessonSpaces(lessonId, updateFields) {
+    async updateLesson(lessonId, updateFields) {
       try {
         const response = await fetch(`https://afterschool-activities-backend.onrender.com/update/${lessonId}`, {
           method: 'PUT',
