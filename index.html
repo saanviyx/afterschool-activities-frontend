@@ -1,33 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Set character encoding and responsive design -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Afterschool Activities</title>
+
+  <!-- Import Vue.js library -->
   <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+  
+  <!-- Import Font Awesome for icons -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
   />
+  
+  <!-- Link to external CSS file -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 <div id="app">
+  <!-- Header with page title and controls -->
   <header>
     <h1>Afterschool Activities</h1>
+    
+    <!-- Theme toggle switch -->
     <label class="switch">
       <input type="checkbox" id="themeToggle" @change="toggleTheme" />
       <span class="slider round"></span>
     </label>
+    
+    <!-- Shopping cart button with item count -->
     <div class="button" @click="toggleCartPage">
       <i class="fas fa-shopping-cart"></i>
       <span class="badge" v-if="cartItemCount">{{ cartItemCount }}</span>
     </div>
   </header>
 
+  <!-- Activities page (not cart view) -->
   <div v-if="!isCartPage" style="margin-bottom: 15px;">
     <div class="lessons-page">
+      <!-- Search input -->
       <input type="text" id="search" v-model="searchQuery" placeholder="Search Lessons..." @input="searchLessons"/>
+      
+      <!-- Sort options -->
       <select v-model="sortKey" style="margin-right: 10px;">
         <option disabled value="">Sort By</option>
         <option value="title">Subject</option>
@@ -36,6 +52,7 @@
         <option value="spaces">Availability</option>
         <option value="rating">Rating</option>
       </select>
+      
       <select v-model="sortOrder">
         <option disabled value="">Order By</option>
         <option value="asc">Ascending</option>
@@ -43,21 +60,33 @@
       </select>
     </div>
 
+    <!-- Message if no lessons are found -->
     <div v-if="filteredLessons.length === 0" class="no-lessons-message">
       No lessons found.
     </div>
 
+    <!-- List of filtered lessons -->
     <div v-if="filteredLessons.length" id="lessonList" class="lesson-container">
       <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson">
         <h2>{{ lesson.title }}</h2>
+        
+        <!-- Lesson image -->
         <img :src="'https://afterschool-activities-backend.onrender.com/images/' + lesson.image" class="lesson-image" />
+        
+        <!-- Rating stars -->
         <div class="rating" v-html="getStars(lesson.rating)"></div>
+        
+        <!-- Lesson details -->
         <p>Location:  {{ lesson.location }}</p>
         <p>Price:  ${{ lesson.price }}</p>
         <p>Availability:  {{ lesson.spaces }}</p>
+        
+        <!-- Add to cart button -->
         <button @click="addToCart(lesson)" :disabled="lesson.spaces === 0">Add To Cart</button>
       </div>
     </div>
+
+    <!-- Modal for order confirmation -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
       <div class="modal-content">
         <h2>Order Successful!</h2>
@@ -67,15 +96,27 @@
     </div>
   </div>
 
+  <!-- Shopping cart view -->
   <div v-if="isCartPage" class="cart-page">
     <h2>Shopping Cart</h2>
+    
+    <!-- Cart items -->
     <div v-if="cart.length" class="cart-content">
       <div v-for="item in cart" :key="item.cartId" class="cart-lesson">
+        <!-- Cart item image -->
         <img :src="'https://afterschool-activities-backend.onrender.com/images/' + item.image" />
+        
+        <!-- Cart item details -->
         <div class="lesson-title">{{ item.title }} - ${{ item.price }} </div>
+        
+        <!-- Remove from cart button -->
         <button @click="removeFromCart(item)">Remove</button>
       </div>
+      
+      <!-- Cart total amount -->
       <div class="cart-total">Total: ${{ cartTotal }}</div>
+      
+      <!-- Checkout form -->
       <h3>Checkout</h3>
       <form id="checkout-form" @submit.prevent="submitOrder">
         <div class="form-row">
@@ -85,17 +126,22 @@
         <button class="checkout-btn" type="submit" :disabled="!canCheckout">Order</button>
       </form>
     </div>
+    
+    <!-- Message for empty cart -->
     <div v-else class="cart-empty">
       <p style="color: #767676e5;">Your cart is empty</p>
       <button @click="toggleCartPage" class="cart-button">Back to Activities</button>
     </div>
   </div>
 
+  <!-- Footer -->
   <div class="footer">
     <h4>ⓒ</h4>
     <p> Created By Saanviya Sunil</p>
   </div>
 </div>
+
+<!-- Link to external JavaScript file -->
 <script src="js/main.js"></script>
 </body>
 </html>
